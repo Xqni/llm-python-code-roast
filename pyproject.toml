@@ -1,0 +1,22 @@
+[build-system]
+requires=["setuptools>=42", "wheel"]
+build-backend="setuptools.build_meta"
+
+[project]
+name = "llama-python"
+version = "0.1.0"
+description = "A CLI chatbot (code roaster) using Qwen3.8b LLM"
+readme = "README.md"
+authors=[{name="Damian", email="example@me.com"}]
+license={text="MIT"}
+requires-python = ">=3.12"
+dependencies = [
+    "ollama>=0.6.2",
+    "python-dotenv>=1.2.2",
+]
+
+[project.scripts]
+start-chat="src.main:main"
+
+[tool.setuptools]
+packages=["src"]
