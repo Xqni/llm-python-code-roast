@@ -15,6 +15,7 @@ def main():
       break
 
     messages.append({"role": "user", "content": user_input})
+    print()
     chat.get_response(messages)
 
 if __name__ == "__main__":
