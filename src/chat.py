@@ -21,10 +21,13 @@ class LlamaChat:
             "read_files": read_files,
             "list_files": list_files,
             "get_cwd": get_cwd,
-            "requests": requests.get
         }
 
-        self.tool_list = [read_files, list_files]
+        self.tool_list = [
+            read_files,
+            list_files,
+            get_cwd
+        ]
 
     def get_response(self, messages):
         self.messages = messages
@@ -40,24 +43,40 @@ class LlamaChat:
                 stream=True,
             )
 
-            tool_calls = None
+            content = ""
+            thinking = ""
+            tool_calls = []
+            thinking_started = False
             for chunk in response:
+                if not thinking_started:
+                    print("\033[2m[Qwen thinking...] \033[0m", end="\r")
+                    thinking_started = True
                 if chunk.message.thinking:
-                    print(chunk.message.thinking, end="", flush=True)
+                    thinking += chunk.message.thinking
+                    print(
+                        f"\033[2m{chunk.message.thinking}\033[0m", end="", flush=True)
                 if chunk.message.content:
+                    content += chunk.message.content
                     print(chunk.message.content, end="", flush=True)
                 if chunk.message.tool_calls:
+                    tool_calls.append(chunk.message.tool_calls)
                     tool_calls = chunk.message.tool_calls
 
+            self.messages.append({
+                "role": "assistant",
+                "content": content,
+                "thinking": thinking,
+                "tool_calls": tool_calls
+            })
             if tool_calls:
                 for tool in tool_calls:
-                    print(f"\n{tool}")
                     tool_name = tool.function.name
                     arguments = tool.function.arguments
 
-                    function_to_call = self.available_tools.get(tool_name)
+                    print(
+                        f"\n\033[2mSystem: AI is running\ntool: \"{tool_name}\"\narguments: {arguments}\033[0m\n")
 
-                    if function_to_call:
+                    if function_to_call := self.available_tools.get(tool_name):
                         result = function_to_call(**arguments)
 
                         self.messages.append({
