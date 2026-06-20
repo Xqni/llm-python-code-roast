@@ -5,9 +5,6 @@ from .config import (
 
 from .tools import read_files, list_files, get_cwd
 
-# list files in the current folder
-# read chat.py in the src folder
-
 
 class LlamaChat:
     def __init__(self, model=OLLAMA_MODEL) -> None:
@@ -20,15 +17,11 @@ class LlamaChat:
             "get_cwd": get_cwd,
         }
 
-        self.tool_list = [
-            read_files,
-            list_files,
-            get_cwd
-        ]
-
     def get_response(self, messages):
+        # Initialize messages
         self.messages = messages
 
+        # Initial print
         print("\033[2m[Qwen thinking...] \033[0m", end="\r")
 
         # Agent Loop
@@ -36,44 +29,72 @@ class LlamaChat:
             response = chat(
                 model=self.model,
                 messages=self.messages,
-                tools=self.tool_list,
-                stream=True,
+                tools=list(self.available_tools.values()),
+                stream=True,  # makes this a generator
             )
 
+            # Accumulators
             content = ""
             thinking = ""
             tool_calls = []
+
+            # Flags for printing
+            thinking_started = False
+            content_started = False
+
+            # streaming the response in the terminal
             for chunk in response:
                 if chunk.message.thinking:
+                    if not thinking:
+                        # Prefix for the thinking chunks, printed once
+                        print("\033[2mQwen thinking: \033[0m", end="")
+                        thinking_started = True
                     thinking += chunk.message.thinking
+                    # Dimmed print for thinking
                     print(
                         f"\033[2m{chunk.message.thinking}\033[0m", end="", flush=True)
                 if chunk.message.content:
+                    if not content_started and thinking_started:
+                        # Prefix for actual message chunks, only printed once
+                        print("\nQwen: ", end="")
+                        content_started = True
                     content += chunk.message.content
                     print(chunk.message.content, end="", flush=True)
                 if chunk.message.tool_calls:
+                    # Add tool calls to the tool_calls accumulator
                     tool_calls.extend(chunk.message.tool_calls)
 
+            # Save the tool calls to the history after the 'for' loop ends
             self.messages.append({
                 "role": "assistant",
                 "content": content,
                 "tool_calls": tool_calls
             })
+
+            # Only if the agent called tools
             if tool_calls:
                 for tool in tool_calls:
+                    # Extract the details
                     tool_name = tool.function.name
                     arguments = tool.function.arguments
 
                     print(
                         f"\n\033[2mSystem: AI is running\ntool: \"{tool_name}\"\narguments: {arguments}\033[0m\n")
 
+                    # If the function is in the available list of tools, call the function (or tool)
                     if function_to_call := self.available_tools.get(tool_name):
                         result = function_to_call(**arguments)
 
+                        # Add the result to the history for final response and tracking
                         self.messages.append({
                             "role": "tool",
                             "content": str(result),
                             "name": tool_name
                         })
+
+                # Agent loops automatically here if the tool calling has not finished
+
+            # Agent never called any times or the tool calls have ended
             else:
+                print()  # Newline before waiting for user input
                 break
