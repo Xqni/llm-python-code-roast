@@ -1,5 +1,6 @@
 import os
 
+
 def read_files(filepath: str) -> str:
     """Read the contents of a specific text file."""
     if not os.path.isfile(filepath):

@@ -1,22 +1,24 @@
 from src.chat import LlamaChat
 import unittest
 
+
 def main():
-  print("Llama LLM Chat - Type 'exit' to quit.")
+    print("Llama LLM Chat - Type 'exit' to quit.")
 
-  chat = LlamaChat()
-  messages = []
+    chat = LlamaChat()
+    messages = []
 
-  while True:
-    user_input = input("\nYou: ")
+    while True:
+        user_input = input("\nYou: ")
 
-    if user_input.lower() in ["exit", "quit"]:
-      print("\nExiting. Goodbye!")
-      break
+        if user_input.lower() in ["exit", "quit"]:
+            print("\nExiting. Goodbye!")
+            break
 
-    messages.append({"role": "user", "content": user_input})
-    print()
-    chat.get_response(messages)
+        messages.append({"role": "user", "content": user_input})
+        print()
+        chat.get_response(messages)
+
 
 if __name__ == "__main__":
-  main()
+    main()

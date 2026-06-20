@@ -7,6 +7,10 @@ import json
 
 from .tools import read_files, list_files, get_cwd
 
+import requests
+
+# list files in the current folder
+
 
 class LlamaChat:
     def __init__(self, model=OLLAMA_MODEL) -> None:
@@ -15,7 +19,9 @@ class LlamaChat:
 
         self.available_tools = {
             "read_files": read_files,
-            "list_files": list_files
+            "list_files": list_files,
+            "get_cwd": get_cwd,
+            "requests": requests.get
         }
 
         self.tool_list = [read_files, list_files]
@@ -31,23 +37,26 @@ class LlamaChat:
                 model=self.model,
                 messages=self.messages,
                 tools=self.tool_list,
-                think=True,
+                stream=True,
             )
 
-            if response.message.thinking:
-                print(
-                    f"\033[2m{response.message.thinking}\033[0m", end="\n")
-            if response.message.tool_calls:
-                self.messages.append(response.message)
+            tool_calls = None
+            for chunk in response:
+                if chunk.message.thinking:
+                    print(chunk.message.thinking, end="", flush=True)
+                if chunk.message.content:
+                    print(chunk.message.content, end="", flush=True)
+                if chunk.message.tool_calls:
+                    tool_calls = chunk.message.tool_calls
 
-                for tool in response.message.tool_calls:
+            if tool_calls:
+                for tool in tool_calls:
+                    print(f"\n{tool}")
                     tool_name = tool.function.name
                     arguments = tool.function.arguments
 
-                    print(
-                        f"\033[2m[System: AI is running tool {tool_name} with {arguments}] \033[0m", end="\r")
-
                     function_to_call = self.available_tools.get(tool_name)
+
                     if function_to_call:
                         result = function_to_call(**arguments)
 
@@ -56,8 +65,5 @@ class LlamaChat:
                             "content": str(result),
                             "tool_name": tool_name
                         })
-
             else:
-                print(f"Qwen: {response.message.content}")
-                self.messages.append(response.message)
                 break
