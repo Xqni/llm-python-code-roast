@@ -3,13 +3,10 @@ from .config import (
     OLLAMA_MODEL
 )
 
-import json
-
 from .tools import read_files, list_files, get_cwd
 
-import requests
-
 # list files in the current folder
+# read chat.py in the src folder
 
 
 class LlamaChat:
@@ -46,11 +43,7 @@ class LlamaChat:
             content = ""
             thinking = ""
             tool_calls = []
-            thinking_started = False
             for chunk in response:
-                if not thinking_started:
-                    print("\033[2m[Qwen thinking...] \033[0m", end="\r")
-                    thinking_started = True
                 if chunk.message.thinking:
                     thinking += chunk.message.thinking
                     print(
@@ -59,13 +52,11 @@ class LlamaChat:
                     content += chunk.message.content
                     print(chunk.message.content, end="", flush=True)
                 if chunk.message.tool_calls:
-                    tool_calls.append(chunk.message.tool_calls)
-                    tool_calls = chunk.message.tool_calls
+                    tool_calls.extend(chunk.message.tool_calls)
 
             self.messages.append({
                 "role": "assistant",
                 "content": content,
-                "thinking": thinking,
                 "tool_calls": tool_calls
             })
             if tool_calls:
@@ -82,7 +73,7 @@ class LlamaChat:
                         self.messages.append({
                             "role": "tool",
                             "content": str(result),
-                            "tool_name": tool_name
+                            "name": tool_name
                         })
             else:
                 break
