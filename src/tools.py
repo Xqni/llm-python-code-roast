@@ -12,6 +12,17 @@ def read_files(filepath: str) -> str:
         return f"Error reading file: {e}"
 
 
+def write_file(string_to_write: str, filepath: str) -> str:
+    """Write content of a specific text file."""
+    if not os.path.isfile(filepath):
+        return f"Error: {filepath} is not a file. Use list_files() to see its contents."
+    try:
+        with open(filepath, 'a+', encoding='utf-8') as f:
+            return f.write(string_to_write)
+    except Exception as e:
+        return f"Error reading file: {e}"
+
+
 def list_files(directory: str) -> str:
     """Lists all files in a given directory."""
     try:

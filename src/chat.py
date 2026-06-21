@@ -3,7 +3,8 @@ from .config import (
     OLLAMA_MODEL
 )
 
-from .tools import read_files, list_files, get_cwd
+from .tools import read_files, list_files, get_cwd, write_file
+import ast
 
 
 class LlamaChat:
@@ -13,8 +14,10 @@ class LlamaChat:
 
         self.available_tools = {
             "read_files": read_files,
+            "write_file": write_file,
             "list_files": list_files,
             "get_cwd": get_cwd,
+            "ast_parser": ast.parse
         }
 
     def get_response(self, messages):
