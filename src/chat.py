@@ -38,7 +38,6 @@ class LlamaChat:
 
             # Accumulators
             content = ""
-            thinking = ""
             tool_calls = []
 
             # Flags for printing
@@ -52,7 +51,6 @@ class LlamaChat:
                         # Prefix for the thinking chunks, printed once
                         print("\033[2mQwen thinking: \033[0m", end="")
                         thinking_started = True
-                    thinking += chunk.message.thinking
                     # Dimmed print for thinking
                     print(
                         f"\033[2m{chunk.message.thinking}\033[0m", end="", flush=True)
