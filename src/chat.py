@@ -1,24 +1,17 @@
 from ollama import chat
 from .config import (
-    OLLAMA_MODEL
+    OLLAMA_MODEL,
+    MODEL_DISPLAY_NAME
 )
 
-from .tools import read_file, list_files, get_cwd, write_file, python_code_parser
+from .helpers.func_names import get_tool_registry
 
 
 class LlamaChat:
     def __init__(self, model=OLLAMA_MODEL) -> None:
         self.model = model
         self.messages = []
-
-        self.available_tools = {
-            "read_file": read_file,
-            "write_file": write_file,
-            "list_files": list_files,
-            "get_cwd": get_cwd,
-            "python_code_parser": python_code_parser
-        }
-
+        self.available_tools = get_tool_registry()
         self.tool_list = list(self.available_tools.values())
 
     def get_response(self, messages):
@@ -26,7 +19,7 @@ class LlamaChat:
         self.messages = messages
 
         # Initial print
-        print("\033[2m[Qwen thinking...] \033[0m", end="\r")
+        print(f"\033[2m[{MODEL_DISPLAY_NAME} thinking...] \033[0m", end="\r")
 
         # Agent Loop
         while True:
@@ -50,7 +43,7 @@ class LlamaChat:
                 if chunk.message.thinking:
                     if not thinking_started:
                         # Prefix for the thinking chunks, printed once
-                        print("\033[2mQwen thinking: \033[0m", end="")
+                        print(f"\033[2m{MODEL_DISPLAY_NAME} thinking: \033[0m", end="")
                         thinking_started = True
                     # Dimmed print for thinking
                     print(
@@ -58,7 +51,7 @@ class LlamaChat:
                 if chunk.message.content:
                     if not content_started:
                         # Prefix for actual message chunks, only printed once
-                        print("\nQwen: ", end="")
+                        print(f"\n{MODEL_DISPLAY_NAME}: ", end="")
                         content_started = True
                     content += chunk.message.content
                     print(chunk.message.content, end="", flush=True)

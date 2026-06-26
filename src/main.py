@@ -9,15 +9,19 @@ def main():
     messages = []
 
     while True:
-        user_input = input("\nYou: ")
+        try:
+            user_input = input("\nYou: ")
 
-        if user_input.lower() in ["exit", "quit"]:
-            print("\nExiting. Goodbye!")
+            if user_input.lower() in ["exit", "quit", "bye"]:
+                print("\nExiting. Goodbye!\n")
+                break
+
+            messages.append({"role": "user", "content": user_input})
+            print()
+            chat.get_response(messages)
+        except KeyboardInterrupt:
+            print("\n\nExiting. Goodbye!\n")
             break
-
-        messages.append({"role": "user", "content": user_input})
-        print()
-        chat.get_response(messages)
 
 
 if __name__ == "__main__":
