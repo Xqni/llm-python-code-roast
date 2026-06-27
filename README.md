@@ -1,4 +1,4 @@
-# llama-python
+# pylm
 
 A CLI chatbot powered by [Ollama](https://ollama.ai) that gives an LLM agent autonomous access to tools — file system, web search, bash, and more.
 
@@ -22,8 +22,8 @@ Built with Qwen3:8b, but works with any Ollama-hosted model.
 
 ```bash
 # Clone the repo
-git clone <repo-url>
-cd llama-python
+git clone https://github.com/Xqni/pylm.git
+cd pylm
 
 # Install with pip
 pip install .

@@ -187,8 +187,8 @@ wheels = [
 ]
 
 [[package]]
-name = "llama-python"
-version = "0.2.0"
+name = "pylm"
+version = "0.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "duckduckgo-search" },
