@@ -2,7 +2,7 @@ from src.chat import Pylm
 
 
 def main():
-    print("Llama LLM Chat - Type 'exit' to quit.")
+    print("Pylm - Type 'exit' to quit.")
 
     chat = Pylm()
     messages = []
