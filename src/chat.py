@@ -7,7 +7,7 @@ from .config import (
 from .helpers.func_names import get_tool_registry
 
 
-class LlamaChat:
+class Pylm:
     def __init__(self, model=OLLAMA_MODEL) -> None:
         self.model = model
         self.messages = []

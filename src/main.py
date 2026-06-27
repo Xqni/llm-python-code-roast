@@ -1,10 +1,10 @@
-from src.chat import LlamaChat
+from src.chat import Pylm
 
 
 def main():
     print("Llama LLM Chat - Type 'exit' to quit.")
 
-    chat = LlamaChat()
+    chat = Pylm()
     messages = []
 
     while True:

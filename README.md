@@ -108,7 +108,7 @@ llmpy/
 └── src/
     ├── __init__.py
     ├── main.py             # CLI entry point (REPL)
-    ├── chat.py             # Core LlamaChat agent loop
+    ├── chat.py             # Core Pylm agent loop
     ├── config.py           # Environment config loader
     ├── tools.py            # Legacy file tools (superseded)
     ├── helpers/
@@ -128,7 +128,7 @@ User Input (REPL)
   main()                    main.py
       │
       ▼
-  LlamaChat.get_response()  chat.py
+  Pylm.get_response()  chat.py
       │
       ├── Send messages + tools to Ollama (streaming)
       ├── Display assistant response
