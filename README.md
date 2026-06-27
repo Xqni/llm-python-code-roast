@@ -1,4 +1,4 @@
-# pylm
+# Pylm
 
 A CLI chatbot powered by [Ollama](https://ollama.ai) that gives an LLM agent autonomous access to tools — file system, web search, bash, and more.
 
